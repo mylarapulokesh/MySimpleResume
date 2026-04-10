@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Choose Template | MySimpleResume</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink: #0d0d12;
+            --surface: rgba(20, 20, 35, 0.85);
+            --muted: #8b8fa8;
+            --accent: #6c63ff;
+            --accent2: #ff6584;
+        }
+
+        body { font-family: 'Inter', sans-serif; background: var(--ink); min-height: 100vh; color: #fff; overflow-x: hidden; }
+
+        .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.2; animation: floatOrb 14s ease-in-out infinite; }
+        .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, #6c63ff, transparent 70%); top: -200px; left: -150px; }
+        .orb-2 { width: 450px; height: 450px; background: radial-gradient(circle, #ff6584, transparent 70%); bottom: -150px; right: -100px; animation-delay: -6s; }
+        .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, #43e97b, transparent 70%); top: 40%; right: 20%; opacity: 0.1; animation-delay: -10s; }
+        @keyframes floatOrb { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-40px) scale(1.05); } 66% { transform: translate(-20px,20px) scale(0.97); } }
+        .bg-canvas::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 32px 32px; }
+
+        .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .particle { position: absolute; background: rgba(255,255,255,0.4); border-radius: 50%; animation: riseUp linear infinite; }
+        @keyframes riseUp { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { transform: translateY(-5vh) scale(1); opacity: 0; } }
+
+        .page { position: relative; z-index: 10; max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+        /* ── Nav ── */
+        .topnav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 56px; animation: fadeUp 0.6s 0.1s both; }
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.25s ease; }
+        .back-btn:hover { background: rgba(108,99,255,0.12); border-color: rgba(108,99,255,0.35); color: #fff; transform: translateX(-3px); }
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #6c63ff, #ff6584); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 6px 20px rgba(108,99,255,0.4); }
+        .brand-name { font-size: 0.95rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+
+        /* ── Hero ── */
+        .hero { text-align: center; margin-bottom: 56px; animation: fadeUp 0.6s 0.2s both; }
+        .hero-tag { display: inline-block; background: rgba(108,99,255,0.12); border: 1px solid rgba(108,99,255,0.25); color: #a594ff; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 16px; border-radius: 50px; margin-bottom: 20px; }
+        .hero h1 { font-size: 2.8rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.04em; margin-bottom: 14px; }
+        .hero h1 .grad { background: linear-gradient(90deg, #6c63ff, #ff6584); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { color: var(--muted); font-size: 0.95rem; font-weight: 300; max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+        /* ── Grid — auto adapts to however many cards (1–7) ── */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; animation: fadeUp 0.6s 0.3s both; }
+
+        /* ── Card ── */
+        .tpl-card { background: rgba(20,20,35,0.7); border: 1.5px solid rgba(255,255,255,0.07); border-radius: 22px; overflow: hidden; cursor: pointer; transition: all 0.3s cubic-bezier(0.22,1,0.36,1); position: relative; animation: fadeUp 0.5s both; }
+        .tpl-card:hover { border-color: rgba(108,99,255,0.5); transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(108,99,255,0.2); }
+
+        /* ── Preview image ── */
+        .tpl-preview { width: 100%; height: 210px; position: relative; overflow: hidden; background: #1a1a2e; }
+        .tpl-preview img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform 0.4s ease; }
+        .tpl-card:hover .tpl-preview img { transform: scale(1.04); }
+
+        .img-skeleton { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.4s ease infinite; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; }
+        @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+        .img-skeleton .sk-icon { font-size: 2rem; opacity: 0.15; }
+        .img-skeleton .sk-text { font-size: 0.72rem; color: rgba(255,255,255,0.12); }
+
+        .preview-overlay { position: absolute; inset: 0; background: rgba(108,99,255,0.88); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.25s ease; pointer-events: none; }
+        .tpl-card:hover .preview-overlay { opacity: 1; }
+        .preview-overlay .ov-icon { font-size: 1.8rem; }
+        .preview-overlay .ov-text { font-size: 0.9rem; font-weight: 700; color: #fff; }
+
+        /* ── Card footer ── */
+        .tpl-footer { padding: 18px 20px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .tpl-name { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 3px; }
+        .tpl-category { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+        .tpl-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+        .tpl-tag-pill { padding: 2px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 50px; font-size: 0.65rem; color: var(--muted); }
+        .preview-btn { padding: 8px 16px; background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.3); border-radius: 8px; color: #a594ff; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: 'Inter', sans-serif; flex-shrink: 0; }
+        .preview-btn:hover { background: linear-gradient(135deg, #6c63ff, #9b59f5); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(108,99,255,0.4); }
+
+        /* ── States ── */
+        .state-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 80px 20px; text-align: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(108,99,255,0.2); border-top-color: #6c63ff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .state-icon { font-size: 3rem; opacity: 0.4; }
+        .state-title { font-size: 1rem; font-weight: 700; color: #fff; }
+        .state-sub { font-size: 0.85rem; color: var(--muted); max-width: 320px; line-height: 1.5; }
+        .retry-btn { padding: 10px 24px; background: linear-gradient(135deg, #6c63ff, #9b59f5); border: none; border-radius: 10px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(108,99,255,0.4); }
+
+        /* ── View All button ── */
+        .view-all-wrap { text-align: center; margin-top: 48px; animation: fadeUp 0.6s 0.5s both; }
+        .view-all-wrap p { color: var(--muted); font-size: 0.88rem; margin-bottom: 16px; }
+        .view-all-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 36px; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.12); border-radius: 14px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; text-decoration: none; transition: all 0.3s ease; backdrop-filter: blur(10px); }
+        .view-all-btn:hover { background: rgba(108,99,255,0.15); border-color: rgba(108,99,255,0.45); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(108,99,255,0.25); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 640px) { .hero h1 { font-size: 2rem; } .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="bg-canvas">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+<div class="particles" id="particles"></div>
+
+<div class="page">
+
+    <div class="topnav">
+        <a class="back-btn" href="dashboard.html">← Back to Dashboard</a>
+        <div class="brand">
+            <div class="brand-icon">📄</div>
+            <div class="brand-name">MySimpleResume</div>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="hero-tag">✦ Template Gallery</div>
+        <h1>Pick your <span class="grad">perfect</span> template</h1>
+        <p>Choose from our curated collection of professionally designed templates.</p>
+    </div>
+
+    <!-- Grid injected here -->
+    <div id="templateGrid"></div>
+
+    <!-- View All — always visible regardless of showcase load result -->
+    <div class="view-all-wrap" id="viewAllWrap">
+        <p>Looking for more options?</p>
+        <a class="view-all-btn" href="allTemplates.html">
+            <span>✦</span> View All Templates <span style="opacity:0.6">→</span>
+        </a>
+    </div>
+
+</div>
+
+<script>
+    const BASE_URL = "http://localhost:8080";
+    /* ── Particles ── */
+    const pContainer = document.getElementById('particles');
+    for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 2.5 + 1;
+        p.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;animation-duration:${Math.random()*14+8}s;animation-delay:${Math.random()*-18}s;`;
+        pContainer.appendChild(p);
+    }
+
+    /* ── Load showcase templates ──
+     *
+     * GET /get/showcase/templates  →  ["resumeTemplate01", "resumeTemplate02", ...]
+     *   Plain array of templateName strings (ordered by admin).
+     *
+     * GET /get/all/templates  →  { allTemplates: [ { templateName, puppeteerTemplatePath, ... } ] }
+     *   Full template objects.
+     *
+     * We fetch both, then map the name list → full objects so we have
+     * previewImage, displayName, tags etc. needed to render the cards.
+     * Order from the showcase list is preserved.
+     */
+    async function loadShowcaseTemplates() {
+        const grid = document.getElementById('templateGrid');
+        grid.innerHTML = `<div class="state-box"><div class="spinner"></div><div class="state-sub">Loading templates...</div></div>`;
+
+        try {
+            /* Fetch both in parallel */
+            const [showcaseRes, allRes] = await Promise.all([
+                fetch(`${BASE_URL}/get/showcase/templates`),
+                fetch(`${BASE_URL}/get/all/templates`)
+            ]);
+
+            if (!showcaseRes.ok || !allRes.ok) throw new Error('Server error');
+
+            /* showcaseData = ["resumeTemplate01", "resumeTemplate02", ...] */
+            const showcaseData = await showcaseRes.json();
+            const allData      = await allRes.json();
+
+            const nameList   = Array.isArray(showcaseData) ? showcaseData.filter(Boolean) : [];
+            const allList    = allData.allTemplates || [];
+
+            /* DEBUG — remove after fixing */
+            console.log('showcase names:', nameList);
+            console.log('allTemplates keys:', allData);
+            console.log('allList sample templateName:', allList[0]?.templateName);
+
+            /* Map ordered name list → full template objects */
+            const templates = nameList
+                .map(name => allList.find(t => t.templateName === name))
+                .filter(Boolean);
+
+            if (templates.length === 0) {
+                grid.innerHTML = `
+                    <div class="state-box">
+                        <div class="state-icon">🖼</div>
+                        <div class="state-title">No templates available</div>
+                        <div class="state-sub">No showcase templates have been configured yet.</div>
+                    </div>`;
+                return;
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'grid';
+            wrapper.innerHTML = templates.map((t, i) => buildCard(t, i)).join('');
+            grid.innerHTML = '';
+            grid.appendChild(wrapper);
+
+        } catch (err) {
+            grid.innerHTML = `
+                <div class="state-box">
+                    <div class="state-icon">⚠️</div>
+                    <div class="state-title">Couldn't load templates</div>
+                    <div class="state-sub">There was a problem connecting to the server.</div>
+                    <button class="retry-btn" onclick="loadShowcaseTemplates()">Try Again</button>
+                </div>`;
+        }
+    }
+
+    /* ── Build one card ──
+     * All values come from the API — nothing hardcoded.
+     *   t.templateName          → ?name=   for /get/template/{name} in templatePreview
+     *   t.puppeteerTemplatePath → ?path=   saved to localStorage on select, sent to PDF API
+     *   t.displayName           → ?label=  UI hint while preview page loads
+     *   t.category, t.tags, t.previewImage → display only
+     */
+    function buildCard(t, i) {
+        const tagsHtml = (t.tags || []).slice(0, 2)
+            .map(tag => `<span class="tpl-tag-pill">${escHtml(tag)}</span>`)
+            .join('');
+
+        const skId = `sk-${i}`;
+
+        const imgHtml = t.previewImage
+            ? `<div class="img-skeleton" id="${skId}">
+                   <div class="sk-icon">🖼</div>
+                   <div class="sk-text">Loading...</div>
+               </div>
+               <img src="${escHtml(t.previewImage)}"
+                    alt="${escHtml(t.displayName)}"
+                    loading="lazy"
+                    onload="document.getElementById('${skId}')?.remove()"
+                    onerror="(function(el){if(el)el.innerHTML='<div class=sk-icon>🖼</div><div class=sk-text>No preview</div>'})(document.getElementById('${skId}'))" />`
+            : `<div class="img-skeleton"><div class="sk-icon">🖼</div><div class="sk-text">No preview</div></div>`;
+
+        const safePath  = escJs(t.puppeteerTemplatePath);
+        const safeName  = escJs(t.templateName);
+        const safeLabel = escJs(t.displayName);
+
+        return `
+            <div class="tpl-card" style="animation-delay:${i * 0.06}s"
+                 onclick="goToPreview('${safePath}','${safeName}','${safeLabel}')">
+                <div class="tpl-preview">
+                    ${imgHtml}
+                    <div class="preview-overlay">
+                        <div class="ov-icon">👁</div>
+                        <div class="ov-text">Click to Preview</div>
+                    </div>
+                </div>
+                <div class="tpl-footer">
+                    <div>
+                        <div class="tpl-name">${escHtml(t.displayName)}</div>
+                        <div class="tpl-category">${escHtml(t.category || '')}</div>
+                        <div class="tpl-tags">${tagsHtml}</div>
+                    </div>
+                    <button class="preview-btn"
+                        onclick="event.stopPropagation();goToPreview('${safePath}','${safeName}','${safeLabel}')">
+                        Preview →
+                    </button>
+                </div>
+            </div>`;
+    }
+
+    /* ── Navigate to templatePreview.html ──
+     * ?path  = puppeteerTemplatePath → saved to localStorage on select, sent to PDF API
+     * ?name  = templateName          → used by /get/template/{name}
+     * ?label = displayName           → shown in UI while API loads
+     */
+    function goToPreview(path, name, label) {
+        const params = new URLSearchParams({ path, name, label });
+        window.location.href = `templatePreview.html?${params.toString()}`;
+    }
+
+    function escHtml(s) { return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+    function escJs(s)   { return String(s??'').replaceAll("'","\\'").replaceAll('"','\\"'); }
+
+    loadShowcaseTemplates();
+</script>
+</body>
+</html>

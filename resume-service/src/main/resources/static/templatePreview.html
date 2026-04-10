@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Template Preview | MySimpleResume</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink: #0d0d12;
+            --surface: rgba(20, 20, 35, 0.9);
+            --muted: #8b8fa8;
+            --accent: #6c63ff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--ink);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* ── Background ── */
+        .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.2; animation: floatOrb 14s ease-in-out infinite; }
+        .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, #6c63ff, transparent 70%); top: -150px; left: -100px; }
+        .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, #ff6584, transparent 70%); bottom: -100px; right: -80px; animation-delay: -6s; }
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            33%  { transform: translate(30px,-40px) scale(1.05); }
+            66%  { transform: translate(-20px,20px) scale(0.97); }
+        }
+        .bg-canvas::after {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* ── Layout ── */
+        .page { position: relative; z-index: 10; max-width: 1000px; margin: 0 auto; padding: 40px 24px 80px; }
+
+        /* ── Top nav ── */
+        .topnav {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 48px;
+            animation: fadeUp 0.5s 0.1s both;
+        }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; text-decoration: none; transition: all 0.25s ease;
+        }
+        .back-btn:hover { background: rgba(108,99,255,0.12); border-color: rgba(108,99,255,0.35); color: #fff; transform: translateX(-3px); }
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #6c63ff, #ff6584); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 6px 20px rgba(108,99,255,0.4); }
+        .brand-name { font-size: 0.95rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+
+        /* ── Main layout ── */
+        .preview-layout {
+            display: grid; grid-template-columns: 1fr 360px;
+            gap: 32px; align-items: start;
+            animation: fadeUp 0.6s 0.2s both;
+        }
+
+        /* ── Preview image ── */
+        .preview-image-wrap {
+            background: var(--surface); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .preview-image-wrap img {
+            width: 100%; display: block; min-height: 500px;
+            object-fit: cover; object-position: top;
+        }
+
+        /* Skeleton */
+        .skeleton {
+            width: 100%; min-height: 500px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%; animation: shimmer 1.4s ease infinite;
+            display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px;
+        }
+        @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+        .skeleton-icon { font-size: 2.5rem; opacity: 0.3; }
+        .skeleton-text { font-size: 0.8rem; color: var(--muted); }
+
+        /* ── Info panel ── */
+        .info-panel { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 32px; }
+        .info-card {
+            background: var(--surface); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 22px; padding: 28px; box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+
+        .tpl-tag {
+            display: inline-block; background: rgba(108,99,255,0.12); border: 1px solid rgba(108,99,255,0.25);
+            color: #a594ff; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; padding: 5px 12px; border-radius: 50px; margin-bottom: 14px;
+        }
+        .tpl-title { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; }
+        .tpl-title .grad { background: linear-gradient(90deg, #6c63ff, #ff6584); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .tpl-description { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .tpl-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .meta-tag {
+            padding: 5px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px; font-size: 0.72rem; font-weight: 600; color: var(--muted);
+        }
+
+        /* ── Select button ── */
+        .select-btn {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #6c63ff, #9b59f5);
+            color: #fff; border: none; border-radius: 14px;
+            font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 8px 28px rgba(108,99,255,0.38);
+            position: relative; overflow: hidden;
+        }
+        .select-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent); opacity: 0; transition: opacity 0.3s; }
+        .select-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(108,99,255,0.52); }
+        .select-btn:hover::after { opacity: 1; }
+        .select-btn:active { transform: scale(0.98); }
+        .select-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* ── Selecting overlay ── */
+        .selecting-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(13,13,18,0.92); backdrop-filter: blur(8px);
+            z-index: 999; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
+        }
+        .selecting-overlay.show { display: flex; }
+        .selecting-box { text-align: center; animation: popIn 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .selecting-icon { font-size: 3.5rem; margin-bottom: 16px; animation: bounce 0.6s ease infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+        .selecting-title { font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        .selecting-sub { font-size: 0.88rem; color: var(--muted); }
+        .selecting-bar-wrap { width: 220px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 20px; overflow: hidden; }
+        .selecting-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #6c63ff, #ff6584); border-radius: 4px; transition: width 1.5s ease; }
+
+        /* Error */
+        .error-box { text-align: center; padding: 60px 20px; color: var(--muted); }
+        .error-box .error-icon { font-size: 3rem; margin-bottom: 16px; }
+        .error-box p { font-size: 0.9rem; line-height: 1.6; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .preview-layout { grid-template-columns: 1fr; }
+            .info-panel { position: static; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-canvas">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+</div>
+
+<!-- Selecting overlay -->
+<div class="selecting-overlay" id="selectingOverlay">
+    <div class="selecting-box">
+        <div class="selecting-icon">✅</div>
+        <div class="selecting-title">Template Selected!</div>
+        <div class="selecting-sub" id="selectingSub">Taking you back to dashboard...</div>
+        <div class="selecting-bar-wrap">
+            <div class="selecting-bar" id="selectingBar"></div>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+
+    <!-- Top nav -->
+    <div class="topnav">
+        <a class="back-btn" id="backBtn" href="templates.html">← Back</a>
+        <div class="brand">
+            <div class="brand-icon">📄</div>
+            <div class="brand-name">MySimpleResume</div>
+        </div>
+    </div>
+
+    <!-- Main layout -->
+    <div class="preview-layout">
+
+        <!-- Preview image -->
+        <div class="preview-image-wrap">
+            <div class="skeleton" id="skeleton">
+                <div class="skeleton-icon">🖼</div>
+                <div class="skeleton-text">Loading preview...</div>
+            </div>
+            <img id="previewImg" src="" alt="Template Preview" style="display:none;" />
+        </div>
+
+        <!-- Info panel -->
+        <div class="info-panel">
+            <div class="info-card">
+                <div class="tpl-tag"   id="tplTag">Template</div>
+                <div class="tpl-title" id="tplTitle">Loading<span class="grad">...</span></div>
+                <div class="tpl-description" id="tplDesc">Fetching template details...</div>
+                <div class="tpl-meta"  id="tplMeta"></div>
+                <button class="select-btn" id="selectBtn" onclick="confirmSelect()" disabled>
+                    Select This Template →
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const BASE_URL = "http://localhost:8080";
+    /*
+     * ── Query params ──
+     *
+     * From templates.html (hardcoded gallery):
+     *   ?path  = /resume/resumeTemplate01.html   (puppeteerTemplatePath)
+     *   ?name  = resumeTemplate01                (templateName → used for API call)
+     *   ?label = Classic                         (displayName  → shown in UI)
+     *
+     * From allTemplates.html (dynamic gallery):
+     *   ?path  = /resume/resumeTemplate03.html
+     *   ?name  = resumeTemplate03
+     *   ?from  = allTemplates                    (so back button returns there)
+     *   (label is optional — API provides displayName anyway)
+     */
+    const params   = new URLSearchParams(window.location.search);
+    const tplPath  = params.get('path');   // puppeteerTemplatePath — saved to localStorage on select
+    const tplName  = params.get('name');   // templateName          — used in /get/template/{name}
+    const tplLabel = params.get('label');  // optional displayName hint from caller
+    const fromPage = params.get('from');   // optional: 'allTemplates'
+
+    // Guard — both path and name are required
+    if (!tplPath || !tplName) {
+        window.location.href = 'templates.html';
+    }
+
+    // ── Back button: return to whichever page the user came from ──
+    const backBtn = document.getElementById('backBtn');
+    if (fromPage === 'allTemplates') {
+        backBtn.href        = 'allTemplates.html';
+        backBtn.textContent = '← Back to All Templates';
+    } else {
+        backBtn.href        = 'templates.html';
+        backBtn.textContent = '← Back to Templates';
+    }
+
+    // Will be updated from API response — used in overlay + localStorage
+    let resolvedDisplayName = tplLabel || tplName;
+
+    // ── Fetch /get/template/{templateName} ──
+    async function loadTemplatePreview() {
+        try {
+            const res = await fetch(`${BASE_URL}/get/template/${encodeURIComponent(tplName)}`);
+            if (!res.ok) throw new Error(`Server returned ${res.status}`);
+
+            /*
+             * Expected response:
+             * {
+             *   templateName:          "resumeTemplate03",
+             *   puppeteerTemplatePath: "/resume/resumeTemplate03.html",
+             *   displayName:           "Classic",
+             *   category:              "Professional",
+             *   description:           "Clean and timeless layout",
+             *   tags:                  ["ATS Friendly", "Professional"],
+             *   previewImage:          "https://res.cloudinary.com/..."
+             * }
+             */
+            const data = await res.json();
+
+            // Use displayName from API as the source of truth
+            resolvedDisplayName = data.displayName || tplLabel || tplName;
+
+            // Populate info panel
+            document.getElementById('tplTag').textContent  = data.category    || 'Template';
+            document.getElementById('tplDesc').textContent = data.description || 'A professionally designed resume template.';
+            document.getElementById('tplTitle').innerHTML  = `${resolvedDisplayName}<span class="grad">.</span>`;
+
+            // Tags
+            const tags = data.tags || [];
+            document.getElementById('tplMeta').innerHTML =
+                tags.map(t => `<span class="meta-tag">${escHtml(t)}</span>`).join('');
+
+            // Preview image
+            if (data.previewImage) {
+                const img = document.getElementById('previewImg');
+
+                img.onload = () => {
+                    document.getElementById('skeleton').style.display = 'none';
+                    img.style.display = 'block';
+                };
+
+                img.onerror = () => {
+                    document.getElementById('skeleton').innerHTML = `
+                        <div class="skeleton-icon">🖼</div>
+                        <div class="skeleton-text">Preview image could not be loaded</div>`;
+                };
+
+                img.src = data.previewImage;
+            } else {
+                document.getElementById('skeleton').innerHTML = `
+                    <div class="skeleton-icon">🖼</div>
+                    <div class="skeleton-text">No preview available</div>`;
+            }
+
+            // Enable select button
+            document.getElementById('selectBtn').disabled = false;
+
+        } catch (err) {
+            console.error('templatePreview error:', err);
+
+            // Show error in image area but still allow selection
+            document.getElementById('skeleton').innerHTML = `
+                <div class="error-box">
+                    <div class="error-icon">⚠️</div>
+                    <p>Could not load template details.<br/>You can still select this template.</p>
+                </div>`;
+
+            // Use the label hint if API failed
+            resolvedDisplayName = tplLabel || tplName;
+            document.getElementById('tplTitle').innerHTML  = `${escHtml(resolvedDisplayName)}<span class="grad">.</span>`;
+            document.getElementById('tplDesc').textContent = 'Preview unavailable — you can still select this template.';
+
+            // Still allow selection
+            document.getElementById('selectBtn').disabled = false;
+        }
+    }
+
+    /*
+     * ── On Select ──
+     * Saves to localStorage:
+     *   selectedTemplate     = puppeteerTemplatePath (?path param)
+     *                          → used by index.js PDF_URL() in generateResume()
+     *   selectedTemplateName = displayName (from API)
+     *                          → shown on the dashboard template button
+     */
+    function confirmSelect() {
+        // Save puppeteerTemplatePath for the PDF generator
+        localStorage.setItem('selectedTemplate', tplPath);
+
+        // Save human-readable name for the dashboard UI
+        localStorage.setItem('selectedTemplateName', resolvedDisplayName);
+
+        // Show overlay
+        document.getElementById('selectingSub').textContent =
+            `"${resolvedDisplayName}" applied — taking you back...`;
+        document.getElementById('selectingOverlay').classList.add('show');
+
+        // Animate progress bar
+        setTimeout(() => {
+            document.getElementById('selectingBar').style.width = '100%';
+        }, 50);
+
+        // Redirect to dashboard after animation
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 1600);
+    }
+
+    function escHtml(s) {
+        return String(s ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+    }
+
+    // Boot
+    loadTemplatePreview();
+</script>
+</body>
+</html>
